@@ -1,12 +1,14 @@
 # AVP-HNCL
 
-**A Two-Stage Model for AVP Classification**
+**A Two-Stage Model for AVP Classification**  
+
 
 **Environment Setup**  
 
 Python: 3.8.13  
 
-PyTorch: 1.13.0-cu117
+PyTorch: 1.13.0-cu117  
+
 
 **Model Overview**  
 
