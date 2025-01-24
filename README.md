@@ -1,41 +1,19 @@
-# ACP-CapsPred
+# AVP-HNCL
 
-**A model for ACP classification and feature extraction**
+**A Two-Stage Model for AVP Classification**
 
 ## abstract
-Cancer is a severe illness that significantly threatens human life and health. Anticancer peptides (ACPs) represent a promising therapeutic strategy for combating cancer. In silico methods enable rapid and accurate identification of ACPs without extensive human and material resources. This study proposes a two-stage computational framework called ACP-CapsPred, which can accurately identify ACPs and characterise their functional activities across different cancer types. ACP-CapsPred integrates a protein language model with evolutionary information and physicochemical properties of peptides, constructing a comprehensive profile of peptides. ACP-CapsPred employs a next-generation neural network, specifically capsule networks, to construct predictive models. Experimental results demonstrate that ACP-CapsPred exhibits satisfactory predictive capabilities in both stages, reaching state-of-the-art performance. In the first stage, ACP-CapsPred achieves accuracies of 80.25\% and 95.71\%, as well as F1-scores of 79.86\% and 95.90\%, on benchmark datasets Set 1 and Set 2, respectively. In the second stage, tasked with characterising the functional activities of ACPs across five selected cancer types, ACP-CapsPred attains an average accuracy of 90.75\% and an F1-score of 92.38\%. Furthermore, ACP-CapsPred demonstrates excellent interpretability, revealing regions and residues associated with anticancer activity. Consequently, ACP-CapsPred presents a promising solution to expedite the development of ACPs and offers a novel perspective for other biological sequence analyses.
+Viral infections have long been a core focus in the field of public health. Antiviral peptides (AVPs), due to their unique mechanisms of action and significant inhibitory effects against a wide range of viruses, exhibit tremendous potential in protecting organisms from various viral diseases. However, existing studies on antiviral peptide recognition often rely on feature selection. As data volume continues to grow and task complexity increases, traditional methods are increasingly showing limitations in feature extraction capabilities and model generalization performance. To tackle these challenges, we propose an innovative two-stage predictive framework that integrates the ESM2 model, data augmentation, feature fusion, and contrastive learning techniques. This framework enables the simultaneous identification of AVPs and their subclasses. By introducing a novel top-k queue-based contrastive learning strategy, the framework significantly improves the model’s accuracy in distinguishing challenging positive and negative samples, as well as its generalization performance. This approach provides robust theoretical support and technical tools for advancing research on antiviral peptides. Model evaluation results show that on the Set 1, the framework achieves an accuracy of 0.9362 and a Matthews Correlation Coefficient (MCC) score of 0.8730. On the Set 2, the model achieves perfect accuracy (1.000) and an MCC score of 1.000. In addition, during the second stage, the model accurately predicts the antiviral activity of antiviral peptides against six major virus families and eight specific viruses. To further enhance accessibility for users, we have developed a user-friendly web interface, available at http://www.bioai-lab.com/AVP-HNCL.
 
 ## Conclusion
 
-In this study, we proposed a two-stage computational framework, ACP-CapsPred, for predicting ACPs and their targets across various cancers. The first stage of ACP-CapsPred is dedicated to identifying ACPs, while the second stage focuses on predicting the functional activity of ACPs against different types of cancer. ACP-CapsPred integrates protein language models to extract residue embeddings and incorporates the physicochemical properties and evolutionary features of peptides to construct a comprehensive profile of peptides. Employing a next-generation neural network, specifically capsule networks, ACP-CapsPred demonstrates  state-of-the-art performance in both stages. The model exhibits notable interpretability, aiding researchers in understanding regions within the sequences associated with anticancer activity. ACP-CapsPred's convincing performance in predicting ACPs and their targets presents a novel option to expedite the development of anticancer peptides.
+The current negative sample selection strategy has some limitations and significant room for improvement. For example, while the model can effectively distinguish negative samples highly similar to anchor sequences, during contrastive learning, some of these negative samples may already be clearly differentiated from the anchor samples, yet still get repeatedly used due to their high similarity. This phenomenon not only wastes computational resources but also limits the model’s potential for further optimization.
+
+In the future, we plan to introduce negative sample selection methods based on attention mechanisms and uncertainty evaluation. By dynamically adjusting the importance weights of negative samples, we aim to prioritize those with higher learning value, thus improving training efficiency, avoiding resource waste, and further enhancing the model's learning capacity.
 
 
 
-## Model
 
-![mode](model.jpg)
-
-## 1.Train
-
-```
-python3 train.py
-```
-
-
-
-**please make sure that cuda is avaliable**
-
-## 2.Evaluate
-
-```
-python3 evaluate.py
-```
-
-## 3.Best model
-
-our model available: [Model](https://awi.cuhk.edu.cn/dbAMP/download/software/best_model.zip)
-
-## 4.Dataset
 ```
 Data\raw_data
 ```
