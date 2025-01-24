@@ -65,13 +65,13 @@ def generate_features(input_path):
     DPC.encodings = DPC.encodings.reset_index(drop=True)
     dde = dde.reset_index(drop=True)
 
-    # 合并所有的特征
+
     result = pd.concat([DistancePair.encodings,CKSAAGP.encodings, QSOrder.encodings, dde], axis=1)
     result.index = PAAC.encodings.index
     return result
 
 
-# 定义氨基酸的 Z-scale 特征
+
 z_scale_dict = {
     'A': [-1.56, -1.67, -1.30, 0.81, -0.21],
     'C': [0.12, 0.67, -2.05, -0.41, -0.09],
