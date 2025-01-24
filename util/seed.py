@@ -13,4 +13,3 @@ def set_seed(seed=1064):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-#4,651,1064
