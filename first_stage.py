@@ -237,7 +237,7 @@ def train():
     torch.save(model.state_dict(), './dataset/Set 1/parm/model.pth')
 
 def evaluate():
-    model.load_state_dict(torch.load('./dataset/nonAMP/parm/model.pth'))
+    model.load_state_dict(torch.load('./dataset/Set 1/parm/model.pth'))
     model.eval()
 
     class_weights = class_weight.compute_class_weight('balanced', classes=[0, 1], y=y_train)
