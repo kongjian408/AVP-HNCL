@@ -14,8 +14,4 @@ In the future, we plan to introduce negative sample selection methods based on a
 
 
 
-```
-Data\raw_data
-```
-
 
