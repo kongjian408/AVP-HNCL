@@ -9,9 +9,9 @@ set_seed()
 
 
 
-class ConvLayer(nn.Module):
+class Conv(nn.Module):
     def __init__(self, input_dim, embedding_dim, hidden_dim):
-        super(ConvLayer, self).__init__()
+        super(Conv, self).__init__()
         self.embedding_layer = nn.Conv1d(in_channels=input_dim, out_channels=embedding_dim, kernel_size=3, padding=1)
         self.batch_norm1 = nn.BatchNorm1d(embedding_dim)
         self.hidden_layer = nn.Conv1d(in_channels=embedding_dim, out_channels=hidden_dim, kernel_size=3, padding=1)
@@ -25,9 +25,9 @@ class ConvLayer(nn.Module):
         return x
 
 
-class BiLSTMLayer(nn.Module):
+class BiLSTM(nn.Module):
     def __init__(self, hidden_dim, lstm_hidden_dim):
-        super(BiLSTMLayer, self).__init__()
+        super(BiLSTM, self).__init__()
         self.bilstm = nn.LSTM(input_size=hidden_dim, hidden_size=lstm_hidden_dim, num_layers=1,
                               bidirectional=True, batch_first=True)
 
@@ -39,8 +39,8 @@ class BiLSTMLayer(nn.Module):
 class FeatureExtractor(nn.Module):
     def __init__(self, input_dim, embedding_dim=505, hidden_dim=960, lstm_hidden_dim=512):
         super(FeatureExtractor, self).__init__()
-        self.conv_layer = ConvLayer(input_dim, embedding_dim, hidden_dim)
-        self.bilstm_layer = BiLSTMLayer(hidden_dim, lstm_hidden_dim)
+        self.conv_layer = Conv(input_dim, embedding_dim, hidden_dim)
+        self.bilstm_layer = BiLSTM(hidden_dim, lstm_hidden_dim)
         self.pooling = nn.AdaptiveMaxPool1d(1)
 
     def forward(self, x):
