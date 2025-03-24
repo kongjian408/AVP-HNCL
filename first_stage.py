@@ -101,7 +101,7 @@ lstm_hidden_dim = 512
 num_classes = 2
 dropout_rate = 0.42
 
-contrastive_weight = 0.1
+contra_weight = 0.1
 epochs = 50
 batch_size = 32
 k = 10
@@ -126,8 +126,8 @@ def train():
 
 
     embedding_dim = X_train_tensor.shape[1]
-    positive_queue = Queue(max_size=queue_size, embedding_dim=embedding_dim, device=device)
-    negative_queue = Queue(max_size=queue_size, embedding_dim=embedding_dim, device=device)
+    pos_queue = Queue(max_size=queue_size, embedding_dim=embedding_dim, device=device)
+    neg_queue = Queue(max_size=queue_size, embedding_dim=embedding_dim, device=device)
     final_test_acc = 0.0
 
     for epoch in range(epochs):
@@ -137,82 +137,82 @@ def train():
         permutation = torch.randperm(X_train_tensor.size(0))
         X_train_shuffled = X_train_tensor[permutation]
         y_train_shuffled = y_train_tensor[permutation]
-        additional_train_shuffled = additional_train_features.iloc[permutation.cpu().numpy()].values
+        add_train_shuffled = additional_train_features.iloc[permutation.cpu().numpy()].values
         train_sequences_shuffled = [train_seq[idx] for idx in permutation.cpu().numpy()]
 
-        for i in tqdm(range(0, X_train_tensor.size(0), batch_size), desc=f'第 {epoch + 1}/{epochs} 轮', unit='批次'):
+        for i in tqdm(range(0, X_train_tensor.size(0), batch_size), desc=f'Epoch {epoch + 1}/{epochs}', unit='Batch'):
             batch_X = X_train_shuffled[i:i + batch_size]
             batch_y = y_train_shuffled[i:i + batch_size]
-            batch_additional = additional_train_shuffled[i:i + batch_size]
+            batch_additional = add_train_shuffled[i:i + batch_size]
             batch_sequences = train_sequences_shuffled[i:i + batch_size]
 
-            augmented_sequences = [augment_sequence(seq,num_fragments=num_fragments,multi_step=multi_step) for seq in batch_sequences]
-            augmented_X = esm_encode(
-                augmented_sequences,
+            aug_sequences = [augment_sequence(seq,num_fragments=num_fragments,multi_step=multi_step) for seq in batch_sequences]
+            aug_X = esm_encode(
+                aug_sequences,
                 esm2,
                 tokenizer,
                 device,
                 max_length=max_length,
                 additional_features=batch_additional
             )
-            augmented_X_tensor = augmented_X.clone().detach().to(device)
+            aug_X_tensor = aug_X.clone().detach().to(device)
 
             optimizer.zero_grad()
             outputs, embeddings = model(batch_X)
-            _, augmented_embeddings = model(
-                augmented_X_tensor)
+            _, aug_embeddings = model(
+                aug_X_tensor)
 
             classification_loss = criterion(outputs, batch_y)
 
-            positive_indices = (batch_y == 1)
-            negative_indices = (batch_y == 0)
+            pos_indices = (batch_y == 1)
+            neg_indices = (batch_y == 0)
 
-            if positive_indices.any():
-                positive_embeddings = embeddings[positive_indices]
-                positive_queue.enqueue(positive_embeddings)
-            if negative_indices.any():
-                negative_embeddings_batch = embeddings[negative_indices]
-                negative_queue.enqueue(negative_embeddings_batch)
+            if pos_indices.any():
+                pos_embeddings = embeddings[pos_indices]
+                pos_queue.enqueue(pos_embeddings)
+            if neg_indices.any():
+                neg_embeddings_batch = embeddings[neg_indices]
+                neg_queue.enqueue(neg_embeddings_batch)
 
-            hard_negatives_list = []
+            hard_neg_list = []
 
-            negative_embeddings = negative_queue.get_all_embeddings()
-            positive_embeddings_store = positive_queue.get_all_embeddings()
+            neg_embeddings = neg_queue.get_all_embeddings()
+            pos_embeddings_store = pos_queue.get_all_embeddings()
 
-            if positive_indices.any() and negative_embeddings.size(0) > 0:
-                pos_embeddings = embeddings[positive_indices]
+            if pos_indices.any() and neg_embeddings.size(0) > 0:
+                pos_embeddings = embeddings[pos_indices]
                 similarity_pos_neg = F.cosine_similarity(
-                    pos_embeddings.unsqueeze(1), negative_embeddings.unsqueeze(0), dim=2
+                    pos_embeddings.unsqueeze(1), neg_embeddings.unsqueeze(0), dim=2
                 )
 
                 topk_values_pos, topk_indices_pos = similarity_pos_neg.topk(k, dim=1, largest=True,
                                                                             sorted=True)
-                hard_negatives_pos = negative_embeddings[topk_indices_pos]
-                hard_negatives_list.append(hard_negatives_pos)
+                hard_neg_pos = neg_embeddings[topk_indices_pos]
+                hard_neg_list.append(hard_neg_pos)
 
-            if negative_indices.any() and positive_embeddings_store.size(0) > 0:
-                neg_embeddings = embeddings[negative_indices]
+            if neg_indices.any() and pos_embeddings_store.size(0) > 0:
+                neg_embeddings = embeddings[neg_indices]
                 similarity_neg_pos = F.cosine_similarity(
-                    neg_embeddings.unsqueeze(1), positive_embeddings_store.unsqueeze(0), dim=2
+                    neg_embeddings.unsqueeze(1), pos_embeddings_store.unsqueeze(0), dim=2
                 )
 
                 topk_values_neg, topk_indices_neg = similarity_neg_pos.topk(k, dim=1, largest=True,
                                                                             sorted=True)
-                hard_negatives_neg = positive_embeddings_store[topk_indices_neg]
-                hard_negatives_list.append(hard_negatives_neg)
+                hard_neg_neg = pos_embeddings_store[topk_indices_neg]
+                hard_neg_list.append(hard_neg_neg)
 
-            if hard_negatives_list:
-                hard_negatives = torch.cat(hard_negatives_list, dim=0)
+            if hard_neg_list:
+                hard_neg = torch.cat(hard_neg_list, dim=0)
             else:
-                hard_negatives = torch.zeros(0, k, embedding_dim).to(device)
+                hard_neg = torch.zeros(0, k, embedding_dim).to(device)
 
-            if hard_negatives.size(0) > 0:
+            if hard_neg.size(0) > 0:
                 con_loss = hard_neg_contra_loss(
-                    torch.cat([embeddings[positive_indices], embeddings[negative_indices]], dim=0),
-                    torch.cat([augmented_embeddings[positive_indices], augmented_embeddings[negative_indices]], dim=0),
-                    hard_negatives
+                    torch.cat([embeddings[pos_indices], embeddings[neg_indices]], dim=0),
+                    torch.cat([aug_embeddings[pos_indices], aug_embeddings[neg_indices]], dim=0),
+                    hard_neg
                 )
-                loss = classification_loss + contrastive_weight * con_loss
+                loss = classification_loss + contra_weight * con_loss
             else:
                 loss = classification_loss
             loss.backward()
