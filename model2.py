@@ -2,9 +2,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-class SecondStageClassifier(nn.Module):
+class Second_Classifier(nn.Module):
     def __init__(self, lstm_hidden_dim, num_classes=2, dropout_rate=0.3, ff_hidden_dim=512):
-        super(SecondStageClassifier, self).__init__()
+        super(Second_Classifier, self).__init__()
 
         self.fc1 = nn.Linear(lstm_hidden_dim, ff_hidden_dim)
         self.fc2 = nn.Linear(ff_hidden_dim, ff_hidden_dim)
