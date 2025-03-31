@@ -229,7 +229,7 @@ def train():
         acc_history.append(epoch_acc)
 
         print(
-            f'Epoch {epoch + 1}, train loss: {epoch_loss:.4f}, Training Accuracy: {epoch_acc:.4f}')
+            f'Epoch {epoch + 1}, Train loss: {epoch_loss:.4f}, Train ACC: {epoch_acc:.4f}')
 
         scheduler.step()
 
@@ -277,19 +277,19 @@ def evaluate():
     MCC = matthews_corrcoef(all_labels, all_preds)
     GMean = (SN * SP) ** 0.5
 
-    auPRC = average_precision_score(all_labels, all_probs)
-    auROC = roc_auc_score(all_labels, all_probs)
+    AUPRC = average_precision_score(all_labels, all_probs)
+    AUROC = roc_auc_score(all_labels, all_probs)
     F1 = f1_score(all_labels, all_preds)
 
-    print(f'Test Loss: {test_loss:.4f}, Test Accuracy: {test_acc:.4f}')
-    print(f'Matthews Correlation Coefficient (MCC): {MCC:.4f}')
-    print(f'Sensitivity (SN): {SN:.4f}')
-    print(f'Specificity (SP): {SP:.4f}')
-    print(f'Geometric Mean (G-Mean): {GMean:.4f}')
-    print(f'auPRC: {auPRC:.4f}')
-    print(f'auROC: {auROC:.4f}')
+    print(f'Test Loss: {test_loss:.4f}, Test ACC: {test_acc:.4f}')
+    print(f'MCC: {MCC:.4f}')
+    print(f'SN: {SN:.4f}')
+    print(f'SP: {SP:.4f}')
+    print(f'G-Mean: {GMean:.4f}')
+    print(f'AUPRC: {AUPRC:.4f}')
+    print(f'AUROC: {AUROC:.4f}')
     print(f'F1-Score: {F1:.4f}')
-    print(f'Confusion Matrix (CM): \n{cm}')
+    print(f'CM: \n{cm}')
 
 
 
