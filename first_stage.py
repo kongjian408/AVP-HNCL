@@ -14,8 +14,11 @@ from util.augmentation import augment_sequence
 from util.Queue import Queue
 import torch.nn.functional as F
 from sklearn.metrics import confusion_matrix, matthews_corrcoef, roc_auc_score, average_precision_score, f1_score
+
 set_seed()
+
 torch.cuda.empty_cache()
+
 train_file = './dataset/Set 1/train.txt'
 test_file = './dataset/Set 1/test.txt'
 
