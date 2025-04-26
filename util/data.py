@@ -5,7 +5,6 @@ import iFeatureOmegaCLI
 from DDE import *
 set_seed()
 
-
 def load_data(data_path):
     avps = []
     nonavps = []
@@ -27,8 +26,6 @@ def load_data(data_path):
     random.shuffle(nonavps)
 
     return avps, nonavps
-
-
 
 def generate_features(input_path):
 
@@ -65,11 +62,9 @@ def generate_features(input_path):
     DPC.encodings = DPC.encodings.reset_index(drop=True)
     dde = dde.reset_index(drop=True)
 
-
     result = pd.concat([DistancePair.encodings,CKSAAGP.encodings, QSOrder.encodings, dde], axis=1)
     result.index = PAAC.encodings.index
     return result
-
 
 
 z_scale_dict = {
