@@ -26,7 +26,7 @@ class ContrastiveLoss(nn.Module):
         mean_negative_similarity = negative_similarity.mean(dim=1)
 
 
-        loss = F.relu(positive_similarity - mean_negative_similarity + self.margin) / self.temperature
+        loss = F.relu(mean_negative_similarity - positive_similarity + self.margin) / self.temperature
 
         if isinstance(self.temperature, nn.Parameter):
             loss = loss.mean() + self.regularization * self.temperature.abs()
