@@ -5,10 +5,6 @@ from util.seed import set_seed
 
 set_seed()
 
-
-
-
-
 class Conv(nn.Module):
     def __init__(self, input_dim, embedding_dim, hidden_dim):
         super(Conv, self).__init__()
