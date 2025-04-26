@@ -1,8 +1,11 @@
 import re
 import math
 from util.seed import set_seed
+import pandas as pd
+import numpy as np
 
 set_seed()
+
 def DDE(fastas, **kw):
 	AA = ['A', 'C', 'D', 'E', 'F', 'G', 'H',
           'I', 'K', 'L', 'M', 'N', 'P', 'Q',
@@ -65,16 +68,6 @@ def DDE(fastas, **kw):
 	return encodings
 
 
-
-
-
-
-
-
-
-
-import pandas as pd
-import numpy as np
 def feature_DDE(file_path):
     f = open(file_path, 'r', encoding='utf-8')
     fasta_list = np.array(f.readlines())
